@@ -22,7 +22,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    procedure DrawBaGua(Canva: TCanvas);
+    procedure DrawBaGua1(Canva: TCanvas);
     procedure createYuing(Canva: TCanvas; start, stop: TPointF);
   end;
 
@@ -36,15 +36,20 @@ implementation
 procedure TForm1.Button1Click(Sender: TObject);
 var
   num: integer;
+  Bagua:TBagua;
 begin
-  num := gua_func.CalcGuaNum(self.DateEdit1.DateTime,
+  Bagua:=TBagua.Create;
+  num := Bagua.CalcGuaNum(self.DateEdit1.DateTime,
     self.RadioButton1.IsChecked);
   self.Label1.Text := inttostr(num);
 
   self.Canvas.Lock;
-  DrawBaGua(self.Canvas);
+  //DrawBaGua1(self.Canvas);
+  Bagua.DrawBaGua(self.Canvas,num );
   self.Canvas.Unlock;
   // self.Invalidate; //repaint
+  Bagua.DisposeOf;
+  Bagua:=nil;
 end;
 
 procedure TForm1.createYuing(Canva: TCanvas; start, stop: TPointF);
@@ -56,7 +61,7 @@ procedure TForm1.createYuing(Canva: TCanvas; start, stop: TPointF);
 
 var
   DefColor: TAlphaColor;
-  qtr1, qtr3, half,qtr12, qtr32: TPointF;
+  qtr1, qtr3, half, qtr12, qtr32: TPointF;
 begin
   DefColor := Canva.Stroke.Color;
   Canva.Stroke.Color := TAlphaColors.Beige;
@@ -64,29 +69,26 @@ begin
   // --------------------------------------------
   half := HalfLine(start, stop);
   qtr1 := HalfLine(start, half);
-  qtr12 :=HalfLine(qtr1, half);
+  qtr12 := HalfLine(qtr1, half);
   qtr3 := HalfLine(half, stop);
-  qtr32:=HalfLine( half,qtr3);
-  //------------------------------
+  qtr32 := HalfLine(half, qtr3);
+  // ------------------------------
   Canva.DrawLine(qtr12, qtr32, 100);
   // -------------------------------------------
   Canva.Stroke.Color := DefColor;
 end;
 
-procedure TForm1.DrawBaGua(Canva: TCanvas);
+procedure TForm1.DrawBaGua1(Canva: TCanvas);
 var
   Centr_Point: Tpoint;
   paint_cord: array [0 .. 2] of TPolygon;
   i, j, radius: integer;
   radian: real;
-  DefColor: TAlphaColor; //?
-  const
-  BaGuaYuing:array [0..2,0..7]of boolean =
-  (
-  (true,false,true,false,false,true,true,false),
-  (false,true,true,false,true,true,false,false ),
-  (true,true,false,true,false,true,false,false)
-  );
+  DefColor: TAlphaColor; // ?
+const
+  BaGuaYuing: array [0 .. 2, 0 .. 7] of boolean = ((true, false, true, false,
+    false, true, true, false), (false, true, true, false, true, true, false,
+    false), (true, true, false, true, false, true, false, false));
 
 begin
   Centr_Point.X := (Canva.Width - 100) div 2;
@@ -98,17 +100,17 @@ begin
 
   for i := 0 to 2 do
   begin
-    SetLength(paint_cord[i], 9);
-    radian := 49*Pi/36;     //245 градусов  отнимать от 270(3*pi/2)-25
-    //radian := 3*pi/2; //radian :=grad*pi/180
+    SetLength(paint_cord[i], 8);
+    radian := 49 * Pi / 36; // 245 градусов  отнимать от 270(3*pi/2)-25
+    // radian := 3*pi/2; //radian :=grad*pi/180
     for j := 0 to 7 do
     begin
       paint_cord[i][j].X := Centr_Point.X + round(radius * cos(radian));
       paint_cord[i][j].Y := Centr_Point.X - round(radius * sin(radian));
-      radian := radian + pi / 4;
+      radian := radian + Pi / 4;
     end;
 
-    paint_cord[i][8] := paint_cord[i][0];
+   // paint_cord[i][8] := paint_cord[i][0];
     // ----------------------------------
 
     Canva.BeginScene();
@@ -116,18 +118,18 @@ begin
     Canva.DrawPolygon(paint_cord[i], 100);
     for j := 0 to 7 do
     begin
-     //-------------------------------------
-     DefColor := Canva.Stroke.Color;
-     Canva.Stroke.Color := TAlphaColors.Beige;
-     Canva.Stroke.Thickness := 6;
-     Canva.DrawLine( paint_cord[i][j], paint_cord[i][j],100);
-     Canva.Stroke.Color := DefColor;
-     Canva.Stroke.Thickness := 5;
-     //-------------------------------------
+      // -------------------------------------
+      DefColor := Canva.Stroke.Color;
+      Canva.Stroke.Color := TAlphaColors.Beige;
+      Canva.Stroke.Thickness := 6;
+      Canva.DrawLine(paint_cord[i][j], paint_cord[i][j], 100);
+      Canva.Stroke.Color := DefColor;
+      Canva.Stroke.Thickness := 5;
+      // -------------------------------------
       if BaGuaYuing[i][j] then
-        createYuing(Canva, paint_cord[i][j], paint_cord[i][j+1]);
+        createYuing(Canva, paint_cord[i][j], paint_cord[i][j + 1]);
     end;
-    Canva.EndScene();
+   // Canva.EndScene();
     radius := radius - 15;
   end;
 end;

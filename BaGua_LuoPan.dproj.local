@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.278,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.046,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.229,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.568,C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas=D:\Delphi_Project_10.3\GUA_Proj\Window_test.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.628,C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\Delphi_Project_10.3\GUA_Proj\BaGua_LuoPan.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.442,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.071,=D:\Delphi_Project_10.3\GUA_Proj\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.759,D:\Delphi_Project_10.3\GUA_Proj\Unit1.pas=D:\Delphi_Project_10.3\GUA_Proj\gua_func.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.568,C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.fmx=D:\Delphi_Project_10.3\GUA_Proj\Window_test.fmx</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.046,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.278,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.568,D:\Delphi_Project_10.3\GUA_Proj\Window_test.pas=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.628,D:\Delphi_Project_10.3\GUA_Proj\BaGua_LuoPan.dproj=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.568,D:\Delphi_Project_10.3\GUA_Proj\Window_test.fmx=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.759,D:\Delphi_Project_10.3\GUA_Proj\gua_func.pas=D:\Delphi_Project_10.3\GUA_Proj\Unit1.pas</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile iOSSimulator="iPhone5"/>
