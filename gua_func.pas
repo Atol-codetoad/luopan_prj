@@ -23,11 +23,13 @@ type
 
   TBagua = class(TPersistent)
   private
-   Zi_Radus:Integer ;
+   Zi_Radius:Integer ;
    BaguaFen: array [0 .. 2, 0 .. 7] of TGuaProp;
-   HanZi:Array [0 .. 7] of TGuaProp;//времменно
+
+   fanMian: Tpoint; //направление
    procedure createYuing(Canva: TCanvas; start, stop: TPointF);
   public
+    HanZi:Array [0 .. 7] of TGuaProp;//времменно
    constructor Create;
    function CalcGuaNum(DateBirth: TDateTime; sex: Boolean): Integer;
     // sex True=M
@@ -39,20 +41,42 @@ Const
   DEF_GOOD = TAlphaColorRec.Blueviolet;
   DEF_NOGOOD = TAlphaColorRec.Deeppink;
   BAGUA_YIN: array [0 .. 2, 0 .. 7] of boolean = (
-  (true, false, true, false, false, true, true, false),
-  (false, true, true, false, true, true, false, false),
-  (true, true, false, true, false, true, false, false)
+  ( false, true, false, false, true, true, false,true),
+  ( true, true, false, true, true, false, false,false),
+  ( true, false, true, false, true, false, false,true)
   );
   MAP_GOODSTATE_GUANUM: array [0..7,0..7] of boolean =(  //1 -PosNumGua,2GuaHao
-   (true,false,true,true,true,false,false,false),
-   (false,true,false,false,false,true,true,true),
-   (true,false,true,true,true,false,false,false),
-   (true,false,true,true,true,false,false,false),
-   (false,true,false,false,false,true,true,true),
-   (false,true,false,false,false,true,true,true),
-   (false,true,false,false,false,true,true,true),
-   (true,false,true,true,true,false,false,false)
+    {N,   NE,   E,   SE,  S,   SW,   W,    NW}
+   (true,false,true,true,true,false,false,false),  {Gua1}
+   (false,true,false,false,false,true,true,true),  {Gua2}
+   (true,false,true,true,true,false,false,false),  {Gua3}
+   (true,false,true,true,true,false,false,false),  {Gua4}
+   (true,false,true,true,true,false,false,false),  {Gua9}
+   (false,true,false,false,false,true,true,true),  {Gua6}
+   (false,true,false,false,false,true,true,true),  {Gua7}
+   (false,true,false,false,false,true,true,true)   {Gua8}
    );
+   //Todo: Пересчитать
+   //---------------------------------------
+   STATE_NAME_GUA: array [0..7,0..7] of integer =(
+   (ord(SE),ord(E),ord(S),ord(N),ord(SW),ord(NW),ord(NE),ord(W)),  {Gua1}
+   (ord(NE),ord(W),ord(NW),ord(SW),ord(N),ord(S),ord(SE),ord(E)),  {Gua2}
+   (ord(S),ord(N),ord(SE),ord(E),ord(W),ord(NE),ord(NW),ord(SW)),  {Gua3}
+   (ord(N),ord(S),ord(E),ord(SE),ord(NE),ord(W),ord(SW),ord(NW)),  {Gua4}
+   (ord(E),ord(SE),ord(N),ord(S),ord(NW),ord(SW),ord(W),ord(NE)),  {Gua9}
+   (ord(W),ord(NE),ord(SW),ord(NW),ord(S),ord(N),ord(E),ord(SE)),  {Gua6}
+   (ord(NW),ord(SW),ord(NE),ord(W),ord(E),ord(SE),ord(S),ord(N)),  {Gua7}
+   (ord(SW),ord(NW),ord(W),ord(NE),ord(SE),ord(E),ord(N),ord(S))   {Gua8}
+   );
+   //---------------------------------------
+  NAME_GUA: array [0..7] of string  = (
+   chr(29983)+chr(12115),chr(12701)+chr(21307),chr(24310)+chr(63886),chr(20239)+chr(20301),
+   chr(31096)+chr(23475),chr(63953)+chr(29022),chr(20116)+chr(39740),chr(32477)+chr(21629)
+   );
+
+  {     NAME_GUA: array [0..7] of string  = ('N','NE','E','SE','S','SW','W','NW'
+   );  }
+
 implementation
 
 function TBagua.CalcGuaNum(DateBirth: TDateTime; sex: Boolean): Integer;
@@ -137,6 +161,8 @@ begin
     for J := 0 to 7 do
      begin
        self.BaguaFen[i][j]:=TGuaProp.Create;
+       if i=0 then
+         HanZi [j]:=TGuaProp.Create;
      end;
 end;
 
@@ -148,10 +174,10 @@ procedure TBagua.DrawBaGua(Canva: TCanvas; GuaNum: Integer);
   radian: real;
   DefColor: TAlphaColor; // ?
   DefThink:single;
-const
+{const
   BaGuaYuing: array [0 .. 2, 0 .. 7] of boolean = ((true, false, true, false,
     false, true, true, false), (false, true, true, false, true, true, false,
-    false), (true, true, false, true, false, true, false, false));
+    false), (true, true, false, true, false, true, false, false)); }
 
 begin
  DefColor := Canva.Stroke.Color;
@@ -162,18 +188,18 @@ begin
   Centr_Point.Y := (Canva.Height - 200) div 2;
   radius := (Canva.Height - 100) div 3;
 
-  self.Zi_Radus:= radius + 20;
+  self.Zi_Radius:= radius + 10;
   // ----Set Coords Bagua Feng
 
   for i := 0 to 2 do
   begin
 
-    radian := 49 * Pi / 36; // 245 градусов  отнимать от 270(3*pi/2)-25
+    radian := 0+22 * Pi / 180; // 245 градусов  отнимать от 270(3*pi/2)-25
     // radian := 3*pi/2; //radian :=grad*pi/180
     for j := 0 to 7 do
     begin
-      self.BaguaFen[i][j].Coord.X := Centr_Point.X + round(radius * cos(radian));
-      self.BaguaFen[i][j].Coord.Y := Centr_Point.X - round(radius * sin(radian));
+      self.BaguaFen[i][j].Coord.X := Centr_Point.X + round(radius * sin(radian));
+      self.BaguaFen[i][j].Coord.Y := Centr_Point.X - round(radius * cos(radian));
       radian := radian + Pi / 4;
     end;
     //----------------Draw bagua----------------------------------
@@ -202,10 +228,10 @@ begin
          slice :=tmp_Point2 ;
          slice2 := tmp_Point;
          //--------------------14.02
-         m:=2;
-         if i>1 then   m:=3;
+        { m:=2;
+         if i>1 then   m:=3; }
          //--------------------14.02
-         for k := 0 to m do
+         for k := 0 to 2 do
           begin
            slice.X := round((tmp_Point.X+slice.X) /2) ;
            slice.Y := round((tmp_Point.Y+slice.Y) /2) ;
@@ -259,17 +285,64 @@ begin
 end;
 
  procedure TBagua.DrawHanZi(Canva: TCanvas; GuaNum: Integer);
+var
+  Centr_Point: Tpoint;
+ i:Integer;
+ radian: real;
+ Rect:TRectF;
+ aTypeGua:array [0..7] of integer ;
+ aNameGua:array [0..7] of string ;
 begin
-{    radian := 49 * Pi / 36; // 245 градусов  отнимать от 270(3*pi/2)-25
-    // radian := 3*pi/2; //radian :=grad*pi/180
-    for j := 0 to 7 do
-    begin
-      self.HanZi[i][j].Coord.X := Centr_Point.X + round(radius * cos(radian));
-      self.HanZi[i][j].Coord.Y := Centr_Point.X - round(radius * sin(radian));
-      radian := radian + Pi / 4;
-    end;
+ for i := 0 to 7 do
+  aTypeGua[i]:=STATE_NAME_GUA[GuaNum][i];
+  for i := 0 to 7 do
+  begin
+   aNameGua[aTypeGua[i]] := NAME_GUA[i];
+  end;
+ //---------------------------------------------
+  Centr_Point.X := (Canva.Width - 100) div 2;
+  Centr_Point.Y := (Canva.Height+60) div 2;
 
-    Canva.TextToPath()  }
+    radian :=0*pi/180; // 245 градусов  отнимать от 270(3*pi/2)-25
+    // radian := 3*pi/2; //radian :=grad*pi/180
+    for i := 0 to 7 do
+    begin
+     //----------------------------
+      if i=0 then
+       begin
+         self.fanMian.X :=Centr_Point.X + round((self.Zi_radius +20)* sin(radian));
+         self.fanMian.Y := Centr_Point.Y - round((self.Zi_radius+20) * cos(radian));
+         Rect:=TRectF.Create(fanMian.X-7,fanMian.Y-7,fanMian.X+7,fanMian.Y+7);
+         Canva.BeginScene();
+         Canva.Font.Style := [TFontStyle.fsBold];
+         Canva.Font.Size := 10;
+         Canva.Fill.Color:= TAlphaColors.Green ;
+         Canva.FillText(Rect, chr(21271) , false, 1,         //chr(21271) bei  https://web-shpargalka.ru/spets-simvoli-utf-8.php
+               [TFillTextFlag.RightToLeft], TTextAlign.Center,
+                TTextAlign.Center);
+         Canva.EndScene;
+       end;
+     //----------------------------
+      self.HanZi[i].Coord.X := Centr_Point.X + round(self.Zi_radius * sin(radian));
+      self.HanZi[i].Coord.Y := Centr_Point.Y - round(self.Zi_radius * cos(radian));
+      radian := radian + Pi / 4;
+      Rect:=TRectF.Create(HanZi[i].Coord.X-10,HanZi[i].Coord.Y-10,HanZi[i].Coord.X+10,HanZi[i].Coord.Y+10);
+      Canva.BeginScene();
+      Canva.Font.Style := [TFontStyle.fsBold];
+      Canva.Font.Size := 12;
+      Canva.Stroke.Color:=TAlphaColors.Greenyellow;
+      //--------------------------------------
+
+      //-------------------------------------
+      Canva.Fill.Color:=TAlphaColors.red;
+      Canva.FillText(Rect, aNameGua[i] , false, 1,
+               [], TTextAlign.Center,
+                TTextAlign.Center);
+
+      //Canva.FillRect(Rect, 0, 0, AllCorners, 100);
+
+      Canva.EndScene;
+     end;
 end;
 
 

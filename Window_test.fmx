@@ -8,9 +8,12 @@ object Form1: TForm1
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnPaint = FormPaint
+  OnShow = FormShow
   DesignerMasterStyle = 0
   object DateEdit1: TDateEdit
     Date = 43834.000000000000000000
+    OnChange = DateEdit1Change
     Position.X = 32.000000000000000000
     Position.Y = 8.000000000000000000
     Size.Width = 145.000000000000000000
@@ -57,5 +60,14 @@ object Form1: TForm1
     TabOrder = 3
     Text = 'Button1'
     OnClick = Button1Click
+  end
+  object Circle1: TCircle
+    OnTap = Circle1Tap
+    Position.X = 560.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 22.000000000000000000
+    Size.Height = 57.000000000000000000
+    Size.PlatformDefault = False
+    OnClick = Circle1Click
   end
 end
