@@ -160,10 +160,12 @@ end;
 procedure TForm1.FormPaint(Sender: TObject; Canvas: TCanvas;
   const ARect: TRectF);
 var
-  num,i: integer;
+  num,i,j: integer;
   Bagua:TBagua;
   ClearNum:integer;
   BaguaActiveLink: array[0..7] of TCircle;
+  StrList:TstringList;
+  tmpStr:String;
 begin
 if not isNeedRepaint then exit; // потом подумать
  if (sender is TForm1) then
@@ -183,7 +185,11 @@ if not isNeedRepaint then exit; // потом подумать
   Bagua.DrawHanZi(Canvas,ClearNum );
   Canvas.Unlock;
   //-----------------------------------Tcircle
-
+    //------------------------------------------
+    StrList:=TstringList.Create;
+    StrList.Delimiter:=',';
+    StrList.DelimitedText:=Bagua.StrLuckyOrder;
+    //------------------------------------------
     for I:=0 to 7 do
   begin
       BaguaActiveLink[i] :=TCircle.Create(self);
@@ -194,14 +200,18 @@ if not isNeedRepaint then exit; // потом подумать
       BaguaActiveLink[i].Height:= 30;
       BaguaActiveLink[i].Fill.Color:=TAlphaColors.Aqua;
       BaguaActiveLink[i].Visible:=true ;
-      BaguaActiveLink[i].TagString:=CompassPoint[i];
       BaguaActiveLink[i].OnTap:= Circle1Tap ;
       BaguaActiveLink[i].OnClick:=Circle1Click ;
       BaguaActiveLink[i].BringToFront;
    end;
-
+   //---------------------------------
+  for I:=0 to StrList.Count-1 do
+  begin
+     j:= strtoint(strList.Strings[i]);
+     BaguaActiveLink[j].TagString:= TXT_GUA_RU[i] ;
+  end;
   //-----------------------------------
-
+  StrList.DisposeOf;
  // self.Invalidate; //repaint
   Bagua.DisposeOf;
   Bagua:=nil;

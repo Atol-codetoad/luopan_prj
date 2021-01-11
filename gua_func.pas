@@ -7,6 +7,18 @@ uses
   System.Variants, FMX.Graphics,
   FMX.Types;
 
+
+
+ resourcestring
+ ShengQi_RU = 'направление Успех - самое благоприятное направление с наилучшим видом энергии. Оно обеспечивает успех в абсолютно любых начинаниях, приносит деньги, известность, положение. Лучшее направление чтобы расположить рабочий стол и входную дверь в этой стороне.';
+ TianYI_RU = 'направление Здоровье- Если входная дверь в спальню и изголовье кровати будут направлены в эту сторону, или принимая пищу, вы будете обращены лицом к ней, то это самым благотворным образом скажется на вашем здоровье и прибавит жизненной активности.';
+ YanNian_RU = 'направление Гармония - помогает создать гармоничные взаимоотношения в семье для долгой совместной жизни. Для этой цели установить кровать изголовьем.';
+ FuWei_RU = 'направление Стабильность - прекрасно подходит для того, чтобы развиваться внутренне, оно дает ясность мышления. Это способствует повышению квалификации, и как следствие - карьерному росту. В эту сторону будет хорошо направить свое рабочее место.';
+ HuoHai_RU = 'направление Препятствия - неприятное, но из плохих оно самое слабое. Означает "мелкие неудачи" и небольшие проблемы. Не так страшно, но по возможности лучше избегайте его.';
+ LiuSha_RU = 'направление Шесть злодеев -  Если в эту сторону смотрит рабочий стол либо кровать, то в семье и на работе могут появиться серьезные конфликты, а в бизнесе неожиданно всплыть юридические проблемы.';
+ WuGui_RU = 'направление Пять Призраков - это направление грозит несчастными случаями и потерями денег. Возможны пожары и кражи. Если спать изголовьем в эту сторону, то можно серьезно захворать или впасть в депрессию.';
+ JueMing_RU = 'направление Полный крах - Это самое неудачное и вредоносное место. Избегайте его во чтобы то ни стало, не сидите лицом к нему. Кровать не должна изголовьем стоять в этой части дома. Для входной двери это нежелательное место.';
+//---------------------------------------------------------------------------------
 type
  TCompasPoint =(N,NE,E,SE,S,SW,W,NW);
 
@@ -29,6 +41,7 @@ type
    fanMian: Tpoint; //направление
    procedure createYuing(Canva: TCanvas; start, stop: TPointF);
   public
+   StrLuckyOrder:String;
     HanZi:Array [0 .. 7] of TGuaProp;//времменно
    constructor Create;
    function CalcGuaNum(DateBirth: TDateTime; sex: Boolean): Integer;
@@ -59,9 +72,10 @@ Const
    //Todo: Пересчитать
    //---------------------------------------
    STATE_NAME_GUA: array [0..7,0..7] of integer =(
-   (ord(SE),ord(E),ord(S),ord(N),ord(SW),ord(NW),ord(NE),ord(W)),  {Gua1}
+   //ShengQi,TianYI,YanNian,FuWei,HuoHai,LiuSha,WuGui,JueMing
+   (ord(SE),ord(E),ord(S),ord(N),ord(W),ord(NW),ord(NE),ord(SW)),  {Gua1}
    (ord(NE),ord(W),ord(NW),ord(SW),ord(N),ord(S),ord(SE),ord(E)),  {Gua2}
-   (ord(S),ord(N),ord(SE),ord(E),ord(W),ord(NE),ord(NW),ord(SW)),  {Gua3}
+   (ord(S),ord(N),ord(SE),ord(E),ord(SW),ord(NE),ord(NW),ord(W)),  {Gua3}
    (ord(N),ord(S),ord(E),ord(SE),ord(NE),ord(W),ord(SW),ord(NW)),  {Gua4}
    (ord(E),ord(SE),ord(N),ord(S),ord(NW),ord(SW),ord(W),ord(NE)),  {Gua9}
    (ord(W),ord(NE),ord(SW),ord(NW),ord(S),ord(N),ord(E),ord(SE)),  {Gua6}
@@ -76,8 +90,20 @@ Const
 
   {     NAME_GUA: array [0..7] of string  = ('N','NE','E','SE','S','SW','W','NW'
    );  }
+ TXT_GUA_RU:  array [0..7] of string =(
+   ShengQi_RU,
+   TianYI_RU,
+   YanNian_RU,
+   FuWei_RU,
+   HuoHai_RU,
+   LiuSha_RU,
+   WuGui_RU,
+   JueMing_RU
+    );
 
-implementation
+
+
+ implementation
 
 function TBagua.CalcGuaNum(DateBirth: TDateTime; sex: Boolean): Integer;
 var
@@ -129,6 +155,7 @@ var
 // -------------
 begin
   DecodeDate(DateBirth, myYear, myMonth, myDay);
+  //This calc china year (if day, month,year<china year then myyear -1)
   if myYear < 2000 then
   begin
     if sex then
@@ -164,6 +191,7 @@ begin
        if i=0 then
          HanZi [j]:=TGuaProp.Create;
      end;
+     self.StrLuckyOrder:='';
 end;
 
 procedure TBagua.DrawBaGua(Canva: TCanvas; GuaNum: Integer);
@@ -193,7 +221,7 @@ begin
 
   for i := 0 to 2 do
   begin
-
+    //где 0 будет угол вычисленный  по формуле для телефонов в закладках
     radian := 0+22 * Pi / 180; // 245 градусов  отнимать от 270(3*pi/2)-25
     // radian := 3*pi/2; //radian :=grad*pi/180
     for j := 0 to 7 do
@@ -286,7 +314,7 @@ end;
 
  procedure TBagua.DrawHanZi(Canva: TCanvas; GuaNum: Integer);
 var
-  Centr_Point: Tpoint;
+ Centr_Point: Tpoint;
  i:Integer;
  radian: real;
  Rect:TRectF;
@@ -294,11 +322,16 @@ var
  aNameGua:array [0..7] of string ;
 begin
  for i := 0 to 7 do
-  aTypeGua[i]:=STATE_NAME_GUA[GuaNum][i];
+   aTypeGua[i]:=STATE_NAME_GUA[GuaNum][i];
+
+
   for i := 0 to 7 do
   begin
    aNameGua[aTypeGua[i]] := NAME_GUA[i];
+   self.StrLuckyOrder:=self.StrLuckyOrder + System.SysUtils.IntToStr(aTypeGua[i]) + ',' ;
+
   end;
+  delete(self.StrLuckyOrder,self.StrLuckyOrder.Length,1);
  //---------------------------------------------
   Centr_Point.X := (Canva.Width - 100) div 2;
   Centr_Point.Y := (Canva.Height+60) div 2;
@@ -326,7 +359,7 @@ begin
       self.HanZi[i].Coord.X := Centr_Point.X + round(self.Zi_radius * sin(radian));
       self.HanZi[i].Coord.Y := Centr_Point.Y - round(self.Zi_radius * cos(radian));
       radian := radian + Pi / 4;
-      Rect:=TRectF.Create(HanZi[i].Coord.X-10,HanZi[i].Coord.Y-10,HanZi[i].Coord.X+10,HanZi[i].Coord.Y+10);
+      Rect:=TRectF.Create(HanZi[i].Coord.X-12,HanZi[i].Coord.Y-12,HanZi[i].Coord.X+12,HanZi[i].Coord.Y+12);
       Canva.BeginScene();
       Canva.Font.Style := [TFontStyle.fsBold];
       Canva.Font.Size := 12;
