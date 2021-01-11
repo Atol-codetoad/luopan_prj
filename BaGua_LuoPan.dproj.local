@@ -1,23 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.628,D:\Delphi_Project_10.3\GUA_Proj\BaGua_LuoPan.dproj=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.255,=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit3.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.635,=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit4.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.382,D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit4.pas=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\tmpLine.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.297,D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit3.pas=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\AndMain.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.255,=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit3.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.071,=D:\Delphi_Project_10.3\GUA_Proj\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.568,D:\Delphi_Project_10.3\GUA_Proj\Window_test.fmx=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.fmx</Transaction>
     <Transaction>1899.12.30 00:00:00.000.492,D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit2.fmx=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\frmEye.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.628,D:\Delphi_Project_10.3\GUA_Proj\BaGua_LuoPan.dproj=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.297,D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit3.fmx=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\AndMain.fmx</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.442,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.417,=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.382,D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit4.fmx=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\tmpLine.fmx</Transaction>
     <Transaction>1899.12.30 00:00:00.000.492,D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit2.pas=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\frmEye.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.417,=D:\Delphi_Project_10.3\GUA_Proj\luopan_prj\Unit2.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.568,D:\Delphi_Project_10.3\GUA_Proj\Window_test.pas=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.759,D:\Delphi_Project_10.3\GUA_Proj\gua_func.pas=D:\Delphi_Project_10.3\GUA_Proj\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.229,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.278,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.442,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.046,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.278,=C:\Users\CodeToad\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
-		<NoProfile iOSSimulator="iPhone5" Android=""/>
+		<NoProfile iOSSimulator="iPhone5" Android="36b3da927d64"/>
 	</ActiveMobileDevice>
 </BorlandProject>

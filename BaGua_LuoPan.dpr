@@ -6,7 +6,8 @@ uses
   Window_test in 'Window_test.pas' {Form1},
   gua_func in 'gua_func.pas',
   frmEye in 'frmEye.pas' {Form2},
-  AndMain in 'AndMain.pas' {Form3};
+  AndMain in 'AndMain.pas' {Form3},
+  tmpLine in 'tmpLine.pas' {Form4};
 
 {$R *.res}
 

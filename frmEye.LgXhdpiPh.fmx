@@ -1,16 +1,34 @@
 inherited Form2_LgXhdpiPh: TForm2_LgXhdpiPh
   ClientHeight = 695
   ClientWidth = 450
-  OnCreate = FormCreate
   DesignerMasterStyle = 3
-  inherited Image1: TImage
-    Position.Y = 160.000000000000000000
-  end
   inherited Timer1: TTimer
     Interval = 100
-    OnTimer = Timer1Timer
-    Left = 288
-    Top = 72
+    Left = 232
+    Top = 16
+  end
+  inherited LayoutTop: TLayout
+    Size.Width = 450.000000000000000000
+    inherited Button1: TButton
+      Align = Left
+      Padding.Left = 10.000000000000000000
+      Padding.Bottom = 10.000000000000000000
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 153.000000000000000000
+      Size.Height = 40.000000000000000000
+    end
+  end
+  inherited LayoutBody: TLayout
+    Size.Width = 450.000000000000000000
+    Size.Height = 645.000000000000000000
+    inherited Image1: TImage
+      Size.Width = 444.000000000000000000
+      Size.Height = 645.000000000000000000
+    end
   end
   inherited OrientationSensor1: TOrientationSensor
     Left = 400

@@ -3,11 +3,13 @@ unit gua_func;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.SysUtils, System.Math, System.Types, System.UITypes, System.Classes,
   System.Variants, FMX.Graphics,
+  FMX.Controls,
+  FMX.Objects,
   FMX.Types;
 
-
+ //---12/01/2021-------------------------
 
  resourcestring
  ShengQi_RU = 'направление ”спех - самое благопри€тное направление с наилучшим видом энергии. ќно обеспечивает успех в абсолютно любых начинани€х, приносит деньги, известность, положение. Ћучшее направление чтобы расположить рабочий стол и входную дверь в этой стороне.';
@@ -39,15 +41,21 @@ type
    BaguaFen: array [0 .. 2, 0 .. 7] of TGuaProp;
 
    fanMian: Tpoint; //направление
-   procedure createYuing(Canva: TCanvas; start, stop: TPointF);
+   LineLst:TList; // список всех  используемых TLine
+   procedure createYuing(Canva: TCanvas; start, stop: TPoint;out End1Yin,Start2Yin:TPoint);
+   procedure PrepareTLine(Line:TLine;start, stop: TPoint);
   public
+   IsBaguaDraw:boolean;
+   ownCtrl:TControl;
    StrLuckyOrder:String;
+   HanZiName:String;
     HanZi:Array [0 .. 7] of TGuaProp;//времменно
    constructor Create;
+   destructor  Destroy; override;
    function CalcGuaNum(DateBirth: TDateTime; sex: Boolean): Integer;
     // sex True=M
-    Procedure DrawBaGua(Canva: TCanvas;GuaNum:Integer);
-    Procedure DrawHanZi(Canva:TCanvas;GuaNum:Integer);
+    Procedure DrawBaGua(Canva: TCanvas;GuaNum:Integer; alfa:real=0);
+    Procedure DrawHanZi(Canva:TCanvas;GuaNum:Integer; alfa:real=0);
   end;
 
 Const
@@ -74,13 +82,13 @@ Const
    STATE_NAME_GUA: array [0..7,0..7] of integer =(
    //ShengQi,TianYI,YanNian,FuWei,HuoHai,LiuSha,WuGui,JueMing
    (ord(SE),ord(E),ord(S),ord(N),ord(W),ord(NW),ord(NE),ord(SW)),  {Gua1}
-   (ord(NE),ord(W),ord(NW),ord(SW),ord(N),ord(S),ord(SE),ord(E)),  {Gua2}
+   (ord(NE),ord(W),ord(NW),ord(SW),ord(E),ord(S),ord(SE),ord(N)),  {Gua2}
    (ord(S),ord(N),ord(SE),ord(E),ord(SW),ord(NE),ord(NW),ord(W)),  {Gua3}
-   (ord(N),ord(S),ord(E),ord(SE),ord(NE),ord(W),ord(SW),ord(NW)),  {Gua4}
-   (ord(E),ord(SE),ord(N),ord(S),ord(NW),ord(SW),ord(W),ord(NE)),  {Gua9}
-   (ord(W),ord(NE),ord(SW),ord(NW),ord(S),ord(N),ord(E),ord(SE)),  {Gua6}
-   (ord(NW),ord(SW),ord(NE),ord(W),ord(E),ord(SE),ord(S),ord(N)),  {Gua7}
-   (ord(SW),ord(NW),ord(W),ord(NE),ord(SE),ord(E),ord(N),ord(S))   {Gua8}
+   (ord(N),ord(S),ord(E),ord(SE),ord(NW),ord(W),ord(SW),ord(NE)),  {Gua4}
+   (ord(E),ord(SE),ord(N),ord(S),ord(NE),ord(SW),ord(W),ord(NW)),  {Gua9}
+   (ord(W),ord(NE),ord(SW),ord(NW),ord(SE),ord(N),ord(E),ord(S)),  {Gua6}
+   (ord(NW),ord(SW),ord(NE),ord(W),ord(N),ord(SE),ord(S),ord(E)),  {Gua7}
+   (ord(SW),ord(NW),ord(W),ord(NE),ord(S),ord(E),ord(N),ord(SE))   {Gua8}
    );
    //---------------------------------------
   NAME_GUA: array [0..7] of string  = (
@@ -101,7 +109,8 @@ Const
    JueMing_RU
     );
 
-
+var
+ O_Line:Tline;
 
  implementation
 
@@ -192,16 +201,68 @@ begin
          HanZi [j]:=TGuaProp.Create;
      end;
      self.StrLuckyOrder:='';
+     self.HanZiName:='';
+     self.IsBaguaDraw:=false;
+ //---------------------------------
+     LineLst:=TList.Create;
+     LineLst.Clear;
 end;
 
-procedure TBagua.DrawBaGua(Canva: TCanvas; GuaNum: Integer);
+destructor TBagua.Destroy;
+var
+  i:integer;
+begin
+for i := 0 to LineLst.Count-1 do
+begin
+  TLine(LineLst.Items[i]).DisposeOf;
+end;
+
+LineLst.DisposeOf;
+//------------------------------------
+  inherited;
+end;
+
+procedure TBagua.PrepareTLine(Line: TLine; start, stop: TPoint);
+var
+d,rAngle:Single;
+tmpPoint : TPoint ;
+begin
+  if Stop.X<Start.X then
+  begin
+   tmpPoint:=start;
+   start:=stop;
+   stop:=tmpPoint;
+  end;
+
+  d := SQRT( Power( Stop.x-Start.X, 2 ) + Power( Stop.y-Start.Y, 2 ) );   // Uses System.Math
+  rAngle := RadToDeg( ArcSin( (Stop.y-Start.Y)/d ));
+
+  Line.Stroke.Thickness := 5;
+  Line.LineLocation := TLineLocation.Inner;
+  Line.LineType := TLineType.Bottom;
+  Line.RotationCenter.X := 0;
+
+  Line.RotationCenter.Y := 0;
+  Line.Height := 1;
+  Line.Width  := d;
+  Line.Position.X := Start.x;
+  Line.Position.Y := Start.y;
+  Line.RotationAngle := rAngle;
+end;
+
+
+
+procedure TBagua.DrawBaGua(Canva: TCanvas; GuaNum: Integer; alfa:real=0);
  var
   Centr_Point,slice,slice2: Tpoint;
   tmp_Point,tmp_Point2 : Tpoint;
+  End1Yin,Start2Yin: Tpoint;
   i, j,k,m, radius: integer;
   radian: real;
   DefColor: TAlphaColor; // ?
   DefThink:single;
+//--------------------------------
+tmp1x,tmp1y,tmp2x,tmp2y:integer;
 {const
   BaGuaYuing: array [0 .. 2, 0 .. 7] of boolean = ((true, false, true, false,
     false, true, true, false), (false, true, true, false, true, true, false,
@@ -212,28 +273,28 @@ begin
  DefThink:=Canva.Stroke.Thickness;
 
   //  Get Center
-  Centr_Point.X := (Canva.Width - 100) div 2;
-  Centr_Point.Y := (Canva.Height - 200) div 2;
-  radius := (Canva.Height - 100) div 3;
+  Centr_Point.X := (Canva.Width {- 100} div 2)-10; //15 radius circle
+  Centr_Point.Y := (Canva.Height div 2)-52;//z_radius + 12 size
+  radius := (Canva.Height - 200) div 3;
 
   self.Zi_Radius:= radius + 10;
   // ----Set Coords Bagua Feng
 
   for i := 0 to 2 do
   begin
-    //где 0 будет угол вычисленный  по формуле дл€ телефонов в закладках
-    radian := 0+22 * Pi / 180; // 245 градусов  отнимать от 270(3*pi/2)-25
+    //где alfa будет угол вычисленный  по формуле дл€ телефонов в закладках
+    radian := alfa+22 * Pi / 180; // 245 градусов  отнимать от 270(3*pi/2)-25
     // radian := 3*pi/2; //radian :=grad*pi/180
     for j := 0 to 7 do
     begin
       self.BaguaFen[i][j].Coord.X := Centr_Point.X + round(radius * sin(radian));
-      self.BaguaFen[i][j].Coord.Y := Centr_Point.X - round(radius * cos(radian));
+      self.BaguaFen[i][j].Coord.Y := Centr_Point.Y - round(radius * cos(radian));
       radian := radian + Pi / 4;
     end;
     //----------------Draw bagua----------------------------------
     for j := 0 to 7 do
     begin
-     Canva.BeginScene();
+    // Canva.BeginScene();
      Canva.Stroke.Thickness := 6;
        if MAP_GOODSTATE_GUANUM [GuaNum][j] then
          Canva.Stroke.Color:= DEF_GOOD
@@ -269,12 +330,50 @@ begin
            tmp_Point:=slice;
            tmp_Point2:=slice2;
       //-----------------------------------------------------
-       if BAGUA_YIN[i][j] then
-        createYuing(Canva, tmp_Point, tmp_Point2)
-       else
-        Canva.DrawLine( tmp_Point, tmp_Point2, 100);
+      End1Yin.x:=0;
+      End1Yin.y:=0;
+      Start2Yin.x:=0;
+      Start2Yin.y:=0;
 
-     Canva.EndScene;
+       if BAGUA_YIN[i][j] then
+       begin
+        createYuing(Canva, tmp_Point, tmp_Point2,End1Yin,Start2Yin);
+         O_Line:=Tline.Create(self.ownCtrl);
+         PrepareTLine(O_Line,tmp_Point, End1Yin);
+         O_Line.Stroke.Kind:= TBrushKind.Solid;
+          O_line.Stroke.Cap:= TStrokeCap.Round;
+          O_Line.Stroke.Thickness:=3;
+           if MAP_GOODSTATE_GUANUM [GuaNum][j] then
+           O_Line.Stroke.Color:= DEF_GOOD
+           else
+           O_Line.Stroke.Color:= DEF_NOGOOD;
+         // O_Line.Stroke.Color:=TAlphaColors.Aquamarine;
+          O_Line.Visible:=true;
+          O_Line.BringToFront;
+          O_Line.Parent:=self.ownCtrl;
+          self.LineLst.Add(O_Line);
+          tmp_Point:=Start2Yin;
+       end;
+       // Canva.DrawLine( tmp_Point, tmp_Point2, 100);
+
+       begin
+          O_Line:=Tline.Create(self.ownCtrl);
+          PrepareTLine(O_Line,tmp_Point, tmp_Point2);
+          O_Line.Stroke.Kind:= TBrushKind.Solid;
+          O_line.Stroke.Cap:= TStrokeCap.Round;
+          O_Line.Stroke.Thickness:=3;
+          if MAP_GOODSTATE_GUANUM [GuaNum][j] then
+           O_Line.Stroke.Color:= DEF_GOOD
+           else
+           O_Line.Stroke.Color:= DEF_NOGOOD;
+         // O_Line.Stroke.Color:=TAlphaColors.Aquamarine;
+          O_Line.Visible:=true;
+          O_Line.BringToFront;
+          O_Line.Parent:=self.ownCtrl;
+          self.LineLst.Add(O_Line);
+       end;
+
+     //Canva.EndScene;
     end;
      radius := radius - 20;
   end;
@@ -288,17 +387,21 @@ end;
 
 
 
-procedure TBagua.createYuing(Canva: TCanvas; start, stop: TPointF);
-  function HalfLine(p1, p2: TPointF): TPointF;
+procedure TBagua.createYuing(Canva: TCanvas; start, stop: TPoint;out End1Yin,Start2Yin:TPoint);
+  function HalfLine(p1, p2: TPoint): TPoint;
   begin
-    result.X := (p1.X + p2.X) / 2;
-    result.Y := (p1.Y + p2.Y) / 2;
+    result.X := round((p1.X + p2.X) / 2);
+    result.Y := round((p1.Y + p2.Y) / 2);
   end;
 
 var
   DefColor: TAlphaColor;
-  qtr1, qtr3, half, qtr12, qtr32: TPointF;
+  qtr1, qtr3, half, qtr12, qtr32: TPoint;
 begin
+      End1Yin.x:=0;
+      End1Yin.y:=0;
+      Start2Yin.x:=0;
+      Start2Yin.y:=0;
   // --------------------------------------------
   half := HalfLine(start, stop);
   qtr1 := HalfLine(start, half);
@@ -306,13 +409,18 @@ begin
   qtr3 := HalfLine(half, stop);
   qtr32 := HalfLine(half, qtr3);
   // ------------------------------
-  Canva.DrawLine(start,qtr12, 100);
-  Canva.DrawLine(qtr32,stop, 100);
+ { Canva.DrawLine(start,qtr12, 100);
+  Canva.DrawLine(qtr32,stop, 100); }
+   End1Yin:= qtr12;
+   Start2Yin:=qtr32;
   // -------------------------------------------
   Canva.Stroke.Color := DefColor;
 end;
 
- procedure TBagua.DrawHanZi(Canva: TCanvas; GuaNum: Integer);
+
+
+
+ procedure TBagua.DrawHanZi(Canva: TCanvas; GuaNum: Integer; alfa:real=0);
 var
  Centr_Point: Tpoint;
  i:Integer;
@@ -332,11 +440,15 @@ begin
 
   end;
   delete(self.StrLuckyOrder,self.StrLuckyOrder.Length,1);
+ //---------------------------------------------01.05.2021
+  for i := 0 to 7 do
+     self.HanZiName:=self.HanZiName+aNameGua[i]+',';
+   delete(self.HanZiName,self.HanZiName.Length,1);
  //---------------------------------------------
-  Centr_Point.X := (Canva.Width - 100) div 2;
-  Centr_Point.Y := (Canva.Height+60) div 2;
+  Centr_Point.X := (Canva.Width {- 100)} div 2);
+  Centr_Point.Y := (Canva.Height div 2);
 
-    radian :=0*pi/180; // 245 градусов  отнимать от 270(3*pi/2)-25
+    radian :=alfa*pi/180; // 245 градусов  отнимать от 270(3*pi/2)-25
     // radian := 3*pi/2; //radian :=grad*pi/180
     for i := 0 to 7 do
     begin
@@ -377,6 +489,8 @@ begin
       Canva.EndScene;
      end;
 end;
+
+
 
 
 { TGuaProp }
